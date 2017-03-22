@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <preConditions>
+        <dbms type="mysql"/>
+    </preConditions>
+
+    <changeSet id="1" author="a.spoda">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <sqlCheck expectedResult="companies">
+                    SHOW TABLES LIKE 'companies'
+                </sqlCheck>
+            </not>
+        </preConditions>
+        <createTable tableName="companies">
+            <column name="id" type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="link" type="TEXT"/>
+            <column name="name" type="TEXT"/>
+            <column name="business" type="TEXT"/>
+            <column name="location" type="TEXT"/>
+            <column name="size" type="TEXT"/>
+            <column name="about" type="TEXT"/>
+            <column name="website" type="TEXT"/>
+            <column name="checked" type="SMALLINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="companies"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="2" author="a.spoda">
+        <addColumn tableName="companies">
+            <column name="processed" type="SMALLINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="companies" columnName="processed"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="a.spoda">
+        <createTable tableName="employees">
+            <column name="id" type="INT(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="link" type="TEXT" remarks="Linkedin Link"/>
+            <column name="name" type="TEXT"/>
+            <column name="is_premium" type="SMALLINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profile_title" type="TEXT" remarks="Position in profile top"/>
+            <column name="profile_company" type="TEXT" remarks="Company in profile top"/>
+            <column name="current_title" type="TEXT" remarks="Current position (for present in experience area)"/>
+            <column name="current_company" type="TEXT" remarks="Current company (for present in experience area)"/>
+            <column name="location" type="TEXT"/>
+            <column name="connections_lvl" type="TEXT" remarks="Connections level with current account"/>
+            <column name="connections_count" type="TEXT" remarks="Connections count (max '500+')"/>
+            <column name="about" type="TEXT"/>
+            <column name="email" type="TEXT"/>
+            <column name="website" type="TEXT"/>
+            <column name="processed" type="SMALLINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checked" type="SMALLINT(1)" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="employees"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4" author="a.spoda">
+        <addColumn tableName="employees">
+            <column name="normalized_title" type="TEXT" remarks="Nomalized title from current or profile top"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="employees" columnName="normalized_title"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="5" author="a.spoda">
+        <addColumn tableName="employees">
+            <column name="company_id" type="INT(11)">
+                <constraints nullable="false" foreignKeyName="fk_employees_companies" references="companies(id)"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="employees" columnName="company_id"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
