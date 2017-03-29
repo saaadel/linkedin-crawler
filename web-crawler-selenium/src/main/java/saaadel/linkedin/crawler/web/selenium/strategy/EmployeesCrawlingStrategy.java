@@ -179,14 +179,19 @@ public class EmployeesCrawlingStrategy {
                 return loadAllEmployeesPage(company, title, page);
             }
 
-            //loaded - check if we have result items
-            scrollPageBottom();
-            try {
-                Thread.sleep(BOTTOM_SCROLLING_READY_TIMEOUT);
-            } catch (InterruptedException ignored) {
-            }
+            if (webDriver.findElements(By.className("premium-btn")).size() == 0) {
 
-            return webDriver.findElements(By.className("search-no-results__message")).size() == 0;
+                //loaded - check if we have result items
+                scrollPageBottom();
+                try {
+                    Thread.sleep(BOTTOM_SCROLLING_READY_TIMEOUT);
+                } catch (InterruptedException ignored) {
+                }
+
+                return webDriver.findElements(By.className("search-no-results__message")).size() == 0;
+            } else {
+                throw new IllegalStateException("PREMIUM REQUIRED");
+            }
         }
         return false;
     }
