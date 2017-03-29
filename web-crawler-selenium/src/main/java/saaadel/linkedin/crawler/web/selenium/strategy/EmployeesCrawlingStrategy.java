@@ -277,6 +277,7 @@ public class EmployeesCrawlingStrategy {
                         employee.setConnectionsCount(null); // can't get, only parse all profile
                         return employee;
                     })
+                    .filter(emp -> !"LinkedIn Member".equals(emp.getName()))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
